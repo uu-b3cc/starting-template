@@ -73,7 +73,7 @@ RUN ghcup install hls ${HSL_VERSION}
 
 # configure stack to install via ghcup
 RUN mkdir -p ~/.stack/hooks \
- && curl https://raw.githubusercontent.com/haskell/ghcup-hs/master/scripts/hooks/stack/ghc-install.sh ~/.stack/hooks/ghc-install.sh \
+ && curl https://raw.githubusercontent.com/haskell/ghcup-hs/master/scripts/hooks/stack/ghc-install.sh > ~/.stack/hooks/ghc-install.sh \
  && chmod +x ~/.stack/hooks/ghc-install.sh
 
 # set shell to bash to use auto completion (e.g. arrow up for last command)
