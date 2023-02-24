@@ -1,6 +1,6 @@
 # accelerate requires nvcc, which is included in cuda's devel images
 # https://hub.docker.com/r/nvidia/cuda/
-FROM nvidia/cuda:12.0.1-devel-ubuntu22.04
+FROM nvidia/cuda:12.0.1-devel-ubuntu20.04
 LABEL maintainer "Trevor L. McDonell <trevor.mcdonell@gmail.com>"
 
 ENV LANG C.UTF-8
@@ -24,7 +24,7 @@ RUN add-apt-repository ppa:git-core/ppa -y \
 # install LLVM
 ARG LLVM_VERSION=12
 RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
- && add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${LLVM_VERSION} main" \
+ && add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-${LLVM_VERSION} main" \
  && apt-get update \
  && apt-get install -y \
         clang-${LLVM_VERSION} \
