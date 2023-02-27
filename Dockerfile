@@ -1,50 +1,33 @@
-# accelerate requires nvcc, which is included in cuda's devel images
+# accelerate-llvm-ptx requires nvcc, which is included in cuda's devel images
 # https://hub.docker.com/r/nvidia/cuda/
-FROM nvidia/cuda:12.0.1-devel-ubuntu20.04
+# FROM nvidia/cuda:12.0.1-devel-ubuntu20.04
+
+FROM ubuntu:20.04
 LABEL maintainer "Trevor L. McDonell <trevor.mcdonell@gmail.com>"
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-ENV LD_LIBRARY_PATH "/usr/local/cuda/lib64:/usr/local/cuda/nvvm/lib64:${LD_LIBRARY_PATH}"
+# ENV LD_LIBRARY_PATH "/usr/local/cuda/lib64:/usr/local/cuda/nvvm/lib64:${LD_LIBRARY_PATH}"
 
-# tzdata is a dependency of the packages, which requires a set timezone
-ARG CONTAINER_TIMEZONE=Europe/Amsterdam
-RUN ln -snf /usr/share/zoneinfo/${CONTAINER_TIMEZONE} /etc/localtime && echo ${CONTAINER_TIMEZONE} > /etc/timezone
+# Don't install suggested or recommended dependencies
+RUN echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-docker
+RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
 
-# install depedencies to add package sources
+# Install dependencies to add package sources
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
- && apt-get install -y gnupg2 curl pkg-config software-properties-common
+ && apt-get install -y software-properties-common curl gnupg
 
-# add latest stable git source to allow ssh commit signing
-RUN add-apt-repository ppa:git-core/ppa -y \
- && apt-get update \
- && apt-get install -y git
-
-# install LLVM
+# Add LLVM package repository
 ARG LLVM_VERSION=12
 RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
- && add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-${LLVM_VERSION} main" \
- && apt-get update \
- && apt-get install -y \
-        clang-${LLVM_VERSION} \
-        libclang-${LLVM_VERSION}-dev \
-        llvm-${LLVM_VERSION}-dev \
-        g++ \
-        make
+ && add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-${LLVM_VERSION} main"
 
-# install other dependencies
+# Install depedencies then clean up package lists
 RUN apt-get update \
- && apt-get install -y \
-        libcapstone-dev \
-        libfreetype-dev \
-        libglfw3-dev \
-        libgmp-dev \
-        libgtk-3-dev \
-        libtbb-dev
-
-# finished installing with apt
-RUN apt-get clean
+ && apt-get install -y pkg-config git g++ make clang-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev llvm-${LLVM_VERSION}-dev \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # create the vscode user
 ARG USERNAME=vscode
@@ -64,12 +47,12 @@ ENV BOOTSTRAP_HASKELL_MINIMAL=True
 RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
 # install ghc and related tools
-ARG GHC_VERSION=9.0.2
-ARG HSL_VERSION=1.9.0.0
+# ARG GHC_VERSION=9.0.2
+# ARG HSL_VERSION=1.9.0.0
 RUN ghcup install cabal
 RUN ghcup install stack
-RUN ghcup install ghc --set ${GHC_VERSION}
-RUN ghcup install hls ${HSL_VERSION}
+RUN ghcup install ghc --set
+RUN ghcup install hls
 
 # configure stack to install via ghcup
 RUN mkdir -p ~/.stack/hooks \
