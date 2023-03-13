@@ -25,7 +25,7 @@ RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
 
 # Install depedencies then clean up package lists
 RUN apt-get update \
- && apt-get install -y pkg-config git g++ make libgmp-dev clang-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev llvm-${LLVM_VERSION}-dev \
+ && apt-get install -y pkg-config git g++ make graphviz libgmp-dev clang-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev llvm-${LLVM_VERSION}-dev \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
