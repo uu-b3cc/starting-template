@@ -26,7 +26,7 @@ RUN apt-get update \
 # Install dependencies then clean up package lists
 # LLVM stuff, removed for this template: clang-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev llvm-${LLVM_VERSION}-dev
 RUN apt-get update \
- && apt-get install -y pkg-config git g++ make graphviz libgmp-dev openssh \
+ && apt-get install -y pkg-config git g++ make graphviz libgmp-dev openssh-client \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
