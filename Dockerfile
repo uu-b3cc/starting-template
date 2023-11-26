@@ -26,7 +26,7 @@ RUN apt-get update \
 # Install dependencies then clean up package lists
 # LLVM stuff, removed for this template: clang-${LLVM_VERSION} libclang-${LLVM_VERSION}-dev llvm-${LLVM_VERSION}-dev
 RUN apt-get update \
- && apt-get install -y pkg-config git g++ make graphviz libgmp-dev \
+ && apt-get install -y pkg-config git g++ make graphviz libgmp-dev openssh \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -60,11 +60,6 @@ RUN ghcup install hls 2.4.0.0
 
 # Make sure cabal's package database is up to date
 RUN cabal update
-
-# TODO: This should move upwards to be with the other apt-get package
-# installations. It's down here so that we can keep the changed image layers to
-# a minimum when adding these things when the course is already running.
-RUN apt-get install -y openssh
 
 # set shell to bash to use auto completion (e.g. arrow up for last command)
 ENV SHELL="/bin/bash"
